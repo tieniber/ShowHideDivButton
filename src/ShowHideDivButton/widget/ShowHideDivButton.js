@@ -6,8 +6,8 @@
     @version   : 0.1
     @author    : Eric Tieniber
     @date      : Fri, 20 Nov 2015 03:02:59 GMT
-    @copyright : 
-    @license   : 
+    @copyright :
+    @license   :
 
     Documentation
     ========================
@@ -37,16 +37,19 @@ define([
     "use strict";
 
     var $ = _jQuery.noConflict(true);
-    
+
     // Declare widget's prototype.
     return declare("ShowHideDivButton.widget.ShowHideDivButton", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
-		
+
+
         // DOM elements
 
         // Parameters configured in the Modeler.
         //targetButtonClass: "",
+		toggleClass: "",
+		targetButtonClass: "",
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function() {
@@ -58,9 +61,11 @@ define([
             console.log(this.id + ".postCreate");
             this._updateRendering();
             this._setupEvents();
-			
-			$(document).on('click.' + this.id, '.toggleButton', function() {
-				$(this).toggleClass("fa-caret-right fa-caret-down");
+
+			var self = this;
+
+			$(document).on('click.' + this.id, "." + this.targetButtonClass, function() {
+				$(this).toggleClass(self.toggleClass);
 				$(this).parent().parent().next().slideToggle("fast");
 			});
         },
