@@ -19,37 +19,38 @@ define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "mxui/dom",
-    "dojo/dom",
-    "dojo/dom-prop",
-    "dojo/dom-geometry",
     "dojo/dom-class",
     "dojo/dom-style",
-    "dojo/dom-construct",
-    "dojo/_base/array",
-    "dojo/_base/lang",
-    "dojo/text",
-    "dojo/html",
-    "dojo/_base/event",
-    "ShowHideDivButton/lib/jquery-1.11.2",
-    "dojo/text!ShowHideDivButton/widget/template/ShowHideDivButton.html"
-], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
+	"dojo/query",
+	"dojo/on",
+    "dojo/text!ShowHideDivButton/widget/template/ShowHideDivButton.html",
+	"dojo/fx",
+	"dojo/fx/Toggler",
+	"dojo/NodeList-traverse"
+], function(declare, _WidgetBase, _TemplatedMixin, dojoClass, dojoStyle, query, on, widgetTemplate, coreFx, Toggler) {
     "use strict";
 
-    var $ = _jQuery.noConflict(true);
-
-    // Declare widget's prototype.
+	// Declare widget's prototype.
     return declare("ShowHideDivButton.widget.ShowHideDivButton", [ _WidgetBase, _TemplatedMixin ], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
-
-        // DOM elements
+		// DOM elements
+		theButton: null,
 
         // Parameters configured in the Modeler.
         //targetButtonClass: "",
 		toggleClass: "",
-		targetButtonClass: "",
+		targetDivClass: "",
+		startHidden: true,
+		buttonText: "",
+		showDuration: 200,
+		hideDuration: 200,
+
+		//private
+		_targetDiv: null,
+		_hidden: true,
+		_commonParent: null,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
         constructor: function() {
@@ -59,92 +60,64 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             console.log(this.id + ".postCreate");
-            this._updateRendering();
-            this._setupEvents();
 
 			var self = this;
+			this.theButton.innerText = this.buttonText;
 
-			$(document).on('click.' + this.id, "." + this.targetButtonClass, function() {
-				$(this).toggleClass(self.toggleClass);
-				$(this).parent().parent().next().slideToggle("fast");
-			});
-        },
+			var commonParentList = query(this.theButton).parents("." + this.sharedParentClass);
+			if (commonParentList) {
+				this._commonParent = commonParentList[0];
+				var targetDivList = query("." + self.targetDivClass, this._commonParent);
+
+				if(targetDivList) {
+					this._targetDiv = targetDivList[0];
+					//dojoClass.add(this._targetDiv, "showHideDivTargetBase");
+
+					var toggler = new Toggler({
+						node: this._targetDiv,
+						showFunc: coreFx.wipeIn,
+						hideFunc: coreFx.wipeOut,
+						showDuration: this.showDuration,
+						hideDuration: this.hideDuration
+					});
+
+					if(this.startHidden) {
+						dojoStyle.set(this._targetDiv, "display", "none");
+						this._hidden = true;
+					} else {
+						this._hidden = false;
+					}
+
+					on(this.theButton, "click", function() {
+						if(self._hidden) {
+							toggler.show();
+							self._hidden = false;
+						} else {
+							toggler.hide();
+							self._hidden = true;
+						}
+
+						dojoClass.toggle(self.theButton, self.toggleClass);
+					});
+				} else {
+					console.log(this.id +": Could not find target div");
+				}
+			} else {
+				console.log(this.id + ": Could not find common parent container");
+			}
+		},
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
             console.log(this.id + ".update");
 
             this._contextObj = obj;
-            this._resetSubscriptions();
-            this._updateRendering();
 
             callback();
         },
-
-        // mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-        enable: function() {},
-
-        // mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-        disable: function() {},
-
-        // mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
-        resize: function(box) {},
-
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
         uninitialize: function() {
             // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
-			$(document).off('click.' + this.id, '.toggleButton');
-        },
-
-        // We want to stop events on a mobile device
-        _stopBubblingEventOnMobile: function(e) {
-            if (typeof document.ontouchstart !== "undefined") {
-                dojoEvent.stop(e);
-            }
-        },
-
-        // Attach events to HTML dom elements
-        _setupEvents: function() {
-
-        },
-
-        // Rerender the interface.
-        _updateRendering: function() {
-        },
-
-        // Handle validations.
-        _handleValidation: function(validations) {
-            this._clearValidations();
-
-            var validation = validations[0],
-                message = validation.getReasonByAttribute(this.backgroundColor);
-
-            if (this.readOnly) {
-                validation.removeAttribute(this.backgroundColor);
-            } else if (message) {
-                this._addValidation(message);
-                validation.removeAttribute(this.backgroundColor);
-            }
-        },
-
-        // Clear validations.
-        _clearValidations: function() {
-            dojoConstruct.destroy(this._alertDiv);
-            this._alertDiv = null;
-        },
-
-        // Show an error message.
-        _showError: function(message) {
-        },
-
-        // Add a validation.
-        _addValidation: function(message) {
-            this._showError(message);
-        },
-
-        // Reset subscriptions.
-        _resetSubscriptions: function() {
-
         }
     });
 });

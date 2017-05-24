@@ -6,27 +6,40 @@
     <icon />
 
     <properties>
-		<!--<property key="showButtonClass" type="string" required="true" defaultValue="">
-            <caption>Show Button Class</caption>
-            <category>Behavior</category>
-            <description>The CSS class(es) of the button when the content is visible.</description>
-        </property>
-		<property key="collapseButtonClass" type="string" required="true" defaultValue="">
+		<property key="buttonText" type="string" required="false" defaultValue="">
+			<caption>Button Text</caption>
+			<category>Appearance</category>
+			<description>Text in the button.</description>
+		</property>
+		<property key="targetDivClass" type="string" required="true" defaultValue="">
             <caption>Target CSS Class</caption>
             <category>Behavior</category>
-            <description>The CSS class(es) of the button when the content is hidden.</description>
+            <description>The CSS class of the div that should hide and show.</description>
         </property>
-		-->
-
-		<property key="targetButtonClass" type="string" required="true" defaultValue="">
-            <caption>Target CSS Class</caption>
+		<property key="sharedParentClass" type="string" required="true" defaultValue="">
+            <caption>Shared Parent CSS Class</caption>
             <category>Behavior</category>
-            <description>The CSS class of the div that should be a show/hide button.</description>
+            <description>The CSS class of a shared parent div. This is used to ensure we're showing/hiding the correct div if in a list.</description>
         </property>
 		<property key="toggleClass" type="string" required="true" defaultValue="">
 			<caption>Toggle CSS Class</caption>
 			<category>Behavior</category>
-			<description>A class to add/remove from the node with the Target CSS class when clicking on it.</description>
+			<description>A class to add/remove from the button when clicking on it.</description>
+		</property>
+		<property key="startHidden" type="boolean" required="true" defaultValue="true">
+			<caption>Start hidden</caption>
+			<category>Behavior</category>
+			<description>Whether to start the target div hidden or shown.</description>
+		</property>
+		<property key="showDuration" type="integer" required="true" defaultValue="200">
+			<caption>Show duration</caption>
+			<category>Behavior</category>
+			<description>Length of time (in ms) for the "show" animation.</description>
+		</property>
+		<property key="hideDuration" type="integer" required="true" defaultValue="200">
+			<caption>Hide duration</caption>
+			<category>Behavior</category>
+			<description>Length of time (in ms) for the "hide" animation.</description>
 		</property>
     </properties>
 </widget>
