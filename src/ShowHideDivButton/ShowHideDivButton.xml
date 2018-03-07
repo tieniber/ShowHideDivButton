@@ -11,6 +11,15 @@
 			<category>Appearance</category>
 			<description>Text in the button.</description>
 		</property>
+		<property key="event" type="enumeration" defaultValue="click" required="true">
+		  <caption>Event</caption>
+		  <category>Behavior</category>
+		  <description>Show/Hide the div on click or hover **Note in order to use hover, this widget must be directly touching (i.e. a sibling) of the target container.</description>
+		  <enumerationValues>
+			<enumerationValue key="click">click</enumerationValue>
+			<enumerationValue key="hover">hover</enumerationValue>
+		  </enumerationValues>
+		</property>
 		<property key="targetDivClass" type="string" required="true" defaultValue="">
             <caption>Target CSS Class</caption>
             <category>Behavior</category>
