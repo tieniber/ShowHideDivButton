@@ -11,6 +11,19 @@
 			<category>Appearance</category>
 			<description>Text in the button.</description>
 		</property>
+		<property key="contextObject" type="entity" required="false" allowNonPersistableEntities="true">
+				<caption>Context object</caption>
+				<category>Appearance</category>
+				<description>The context entity (required for the dynamic label)</description>
+		</property>			
+		<property key="dynamicButtonTitleAttribute" type="attribute" entityProperty="contextObject" required="false">
+			<caption>Dynamic Button Text</caption>
+			<category>Appearance</category>
+			<description>Overrides the static button text with something from an attribute. Choose a context entity!</description>
+			<attributeTypes>
+					<attributeType name="String" />
+			</attributeTypes>
+		</property>
 		<property key="event" type="enumeration" defaultValue="click" required="true">
 		  <caption>Event</caption>
 		  <category>Behavior</category>

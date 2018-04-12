@@ -142,9 +142,11 @@ define([
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
             console.log(this.id + ".update");
-
+            
             this._contextObj = obj;
-
+            if (this._contextObj && this.dynamicButtonTitleAttribute) {
+                this.theButton.innerText = this._contextObj.get(this.dynamicButtonTitleAttribute)
+            }
             callback();
         },
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
